@@ -38,6 +38,14 @@ sb = semibreve = 4
 # breve_puntato = 3
 
 
+#Megamixer
+trumpet=1
+bass=1
+harmony=1
+drums=1
+
+
+
 # DEFINITION OF EACH PART
 
 #trumpet
@@ -48,8 +56,8 @@ trumpet_b_line = [:c5,:c5,:ab4,:g4,:eb4,:d4,:eb4, :g4, :ab4,]
 trumpet_b_time = [qp,  st, st, st,  q,   ot, ot,  ot, sb ]
 
 
-trumpet_c_line = [:eb4,:d4,:c4,:eb4,:d4,:c4,:r]
-trumpet_c_time = [m,m,m,m,m,m,m,m,m,m,m,m,m,m,]
+trumpet_c_line = [:g4, :f4,  :eb4, :g4,  :f4,  :d4, :eb4, :c4, :r, :r, :r]
+trumpet_c_time = [q,    q,   o,   o,     o,   o,    o, o, o, o, q]
 
 
 #bass
@@ -61,8 +69,8 @@ bass_a_time = [q,   s,   s,    s,  s,    q,    s,  s,  s,    s,   q,   s,    s, 
 bass_b_line= [:c2, :g1, :bb1, :c2, :c2,  :r, :r,:c2, :g1, :bb1, :c2, :c2,  :r, :r]
 bass_b_time = [q,   s,   s,    s,  s,    q,  q,q,   s,   s,    s,  s,    q,  q]
 
-bass_c_line = [:eb4,:d4,:c4,:eb4,:d4,:c4,:r,:g3,:ab3,:eb4,:eb4,:d4,:c4,:eb4,:d4,:c4,:r,:g3,:ab3,:eb4]
-bass_c_time = [m,m,m,m,m,m,m,m,m,m]
+bass_c_line = [:ab1,  :ab1, :ab1, :ab1,:ab1, :r,  :ab1,       :c2, :g1, :bb1, :c2, :c2]
+bass_c_time = [q,      s,   s,     s,   s,    q,   q,          q,   s,   s,    s,   s]
 
 
 #drums
@@ -76,6 +84,22 @@ drums_b_line = [:eb4,:d4,:c4,:eb4,:d4,:c4,:r,:g3,:ab3,:eb4,:eb4,:d4,:c4,:eb4,:d4
 drums_b_time = [m,m,m,m,m,m,m,m,m,m]
 
 
+chords_b = ring  (chord :ab, :major7), (chord :ab, :major7), (chord :ab, :major7), (chord :ab, :major7),
+  (chord :c, :minor),   (chord :c, :minor), (chord :c, :minor),   (chord :c, :minor)
+
+#play_chord [:e2,:e3,:b3],sustain: (b * 0.9),release: (b * 0.1),amp: 0.4
+
+
+define :harmony do |notearray,shift=0,vol=1|
+  in_thread do
+    8.times do
+      sleep o
+      play_chord chords_b.tick
+      sleep o
+    end
+  end
+end
+
 
 # STRUMENTI
 define :trumpet do |notearray,durationarray,shift=0,vol=1|
@@ -87,6 +111,7 @@ define :trumpet do |notearray,durationarray,shift=0,vol=1|
     end
   end
 end
+
 
 
 define :bass do |notearray,durationarray,shift=0,vol=1|
@@ -116,15 +141,6 @@ define :drums do |notearray,durationarray,shift=0,vol=1|
   end
 end
 
-
-
-
-
-
-
-
-
-
 # STRUTTURA
 
 define :intro do
@@ -138,35 +154,48 @@ end
 
 
 define :part_a do
-  in_thread do
-    2.times do
-      in_thread do
-        trumpet(trumpet_a_line,trumpet_a_time)
-      end
-      in_thread do
-        bass(bass_a_line,bass_a_time)
-      end
-      #in_thread do
-      #  drums(drums_a_line,drums_a_time)
-    end
+  2.times do
+    #in_thread do
+    trumpet(trumpet_a_line,trumpet_a_time)
+    #end
+    #in_thread do
+    bass(bass_a_line,bass_a_time)
+    
+    sleep 8
   end
-  sleep 4*2  #end
+  
+  #in_thread do
+  #
+  #end
+  #sleep 4*2  #end
 end
 
 
 
 define :part_b do
-  in_thread do
-    4.times do
-      in_thread do
-        trumpet(trumpet_b_line,trumpet_b_time)
-      end
-      in_thread do
-        bass(bass_b_line,bass_b_time)
-      end
-    end
+  
+  4.times do
+    trumpet(trumpet_b_line,trumpet_b_time)
+    bass(bass_b_line,bass_b_time)
+    harmony(chords_b)
+    sleep 8
   end
-  sleep 4*2
+end
+
+define :part_c do
+  4.times do
+    trumpet(trumpet_c_line,trumpet_c_time)
+    bass(bass_c_line,bass_c_time)
+    sleep 4*2
+  end
+end
+
+
+define :brake_one do
+  4.times do
+    bass(bass_b_line,bass_b_time)
+    sleep 4*2
+  end
 end
 
 
@@ -202,19 +231,22 @@ end
 #set_sched_ahead_time! 0.5 #adjust as necessary.
 with_fx :reverb,room: 0.6 do
   intro
+  
   part_b
   
   part_a
-  #part_c
-  #part_a
-  #part_c
+  part_c
+  part_a
+  part_c
   
-  #brake
+  brake_one
   
-  #part_a
-  #part_c
-  #part_a
-  #part_c
+  part_a
+  part_c
+  part_a
+  part_c
+  
+  
   
   
 end
