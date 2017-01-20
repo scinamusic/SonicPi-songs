@@ -1,0 +1,25 @@
+The structure of the code is ment to reflect the structure of the song:
+  When you listen at the song, the highest structural elements that you perceive is the repetition of various
+strofe with regularity in the song.
+  
+Within each strofa, there are multiple parts: harmony, drums, bass, trumpet(s).
+  
+definizione spartito
+
+definizione suoni
+
+
+Each single part is defined and assembled. In this section, basically the various melodic and harmonic lines are played with their respecctive instrument.
+  
+# - definizione di ogni singola parte di brano, dove si compongono gli strumenti assieme) definiamo A , b c
+# - devinizione brano: combihiamo tutte le parti assieme come il brano richiede.. (ABABCCCDA.. etc)
+
+Games:
+  far suonare a strumenti diversi gli altri strumenti. 
+
+
+# In questo modo si rispecchia le descrizione della "canzone" come lo farebbe un umano:
+# inizia a descrivere prima la struttura della canzone in termini di ripetizioni di varie figure principali.
+# poi inizi a descrivere ciascuna di queste "figure principali", quali strumenti ci sono, e cosa fanno:
+# poi descrivi le varie linee melodiche e armoniche degli strumenti
+# fino a descrivere il loro suono nel dettaglio

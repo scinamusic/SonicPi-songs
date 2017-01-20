@@ -1,0 +1,25 @@
+My favourite things
+
+http://coltrane.room34.com/thesis
+
+“My Favorite Things” is a relaxed, yet lilting waltz in e minor. 
+Its “standard” structure, transcribed by Jamey Aebersold (8) and shown in Figure 1, is based on a 40-bar bipartite form.
+
+The first part of this form is a 16-bar A section which is repeated once, 
+and then performed a third time with a somewhat altered chord progression. 
+
+Next, a 24-bar B section concludes the form. 
+
+With a vamp used at the beginning and end as both an introduction and a coda (shown only at the end in the figure below),
+the overall form is as follows:
+
+Introduction – A – A – A’ – B – Coda.
+
+
+Coltrane version
+
+Here the basic vamp is Emin | F#min, but if you think about it it's basically the same as 
+Emin | A7, which you can think of as a ii-V, and is the building block of jazz. 
+Anyway, basically you can play off any chord in the key. 
+If you're thinking E dorian (which Emin - F#min would suggest) then it's the key of D. 
+So you can play off any chord from the key of D.

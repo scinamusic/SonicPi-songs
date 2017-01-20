@@ -1,0 +1,92 @@
+
+ live_loop :regular_tick do
+  puts tick
+  sleep 1
+end
+
+live_loop :random_reset_tick do
+  if one_in 3
+    tick_reset
+    puts "reset tick!"
+  end
+  puts tick
+  sleep 1
+  
+end
+
+
+
+## loop into various part of code
+syntes = [:beep, :blade, :bnoise, :cnoise, :dark_ambience, :dpulse,
+          :dsaw, :dull_bell, :fm, :gnoise, :growl, :hollow, :hoover, :mod_beep,
+          :mod_dsaw, :mod_fm, :mod_pulse, :mod_saw, :mod_sine, :mod_tri,
+          :noise, :piano, :pnoise, :pretty_bell, :prophet, :pulse,
+          :saw, :sine, :square, :subpulse, :supersaw, :tb303, :tri, :zawa]
+
+#syntes.each do |synte|
+#
+#  synth synte, note: scala.tick
+#  sleep 1
+#
+#  synth synte, note: scala.tick
+#  sleep 1
+#
+##  synth synte, note: scala.tick
+#  sleep 1
+#
+#  synth synte, note: scala.tick
+#  sleep 1
+#
+#  synth synte, note: scala.tick
+##  sleep 1
+#end
+
+
+## base per la struttura di qualunque pezzo che componi
+#first set up synth and variables for note lengths
+v = :tri #tune
+bv = :saw #bass part
+#not all note lengths are used
+dsq = 1 * s #demi-semi-quaver
+sq = 2 * s #semi-quaver
+sqd = 3 * s #semi-quaver dotted
+q = 4 * s #quaver
+qd = 6 * s #quaver dotted
+qdd = 7 * s #quaver double dotted
+c = 8 * s #crotchet
+cd = 12 * s #crotchet dotted
+cdd = 14 * s #crotchet double dotted
+m = 16 * s #minim
+md = 24 * s #minim dotted
+mdd = 28 * s #minim double dotted
+b = 32 * s #breve
+bd = 48 * s #breve dotted
+
+
+
+
+#########
+scala = scale :C, :aeolian
+with_synth :blade do
+  
+  live_loop :uptime do
+    with_fx :reverb do
+      4.times do
+        sleep 2
+        play chord(:a2, 'm'), attack: 0, decay:0.003
+        play chord(:a2, 'm'), attack: 1, decay:0.004
+      end
+  end
+end
+
+
+### dotted
+define :dotted do |note|
+  1.5*note
+end
+
+
+## random agio notes
+
+
+notes = (scale: e1, :minor_pentatonic, num_octaves: 2).shuffle

@@ -1,0 +1,67 @@
+
+##### Synth
+questi devono diventare tutti dei define, che posso riusare una volta messi in un modulo
+
+#### Melody
+
+
+#### Sams one
+# Name:
+# Description:
+# questo loop crea per qualche motivo strano una nota di sottofondo, che varia a seconda del randm seed
+# un sinth piuttosto corposo, una bella tastiera cyberpunk anni 90, stile
+# Style: Elettronica anni 90, Cyberpunk, 
+# Authors: Kraftwerk
+# param:
+#  - random seed
+#  - krush
+#  - tanh
+#  - synth: square
+#  - cutoff synth
+#  - scala random, ottave
+live_loop :melody do
+  tick_reset_all
+  use_random_seed 42
+  notes = (scale :e2, :aeolian , num_octaves: 2).shuffle
+  with_fx :reverb, room: 1, amp: 3 do
+    with_fx :krush, mix: 0.4 do
+      with_fx :tanh, krunch: 30, amp: 0.7 do
+        n= synth :square, cutoff: 80, release: 8, note: notes.tick, cutoff_slide: 1.5
+        control n, cutoff: 20
+        
+        32.times do
+          sleep 0.125
+          control n, note:notes.choose
+        end
+      end
+    end
+  end
+end
+
+
+
+#### Drumkit
+# Name: snares 1
+# Description: 
+# Style: 
+# original author 
+# Authors: 
+# param:
+#  - random seed
+#  - krush
+#  - tanh
+#  - synth: square
+#  - cutoff synth
+define :snare do |amp|
+  with_fx :compressor, pre_amp: 1, threshold: 4 do
+    with_fx :distortion, distort: 0.2 do
+      sample :sn_dolf, amp: amp, start: 0.1, finish: 0.35, rate: 0.7
+    end
+  end
+end
+
+# poi da usare così...
+#live_loop :snares do
+#  snare 1
+#  sleep 3
+#end
