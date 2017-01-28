@@ -1,8 +1,4 @@
-use_bpm 65
-
-
-v = :tri #tune
-bv = :saw #bass part
+use_bpm 64
 
 
 st = sedicesimo_terzina = 0.1666
@@ -39,7 +35,7 @@ trumpet_a_line = [:eb4, :d4, :c4, :r,  :eb4,  :d4, :c4, :r,     :g3, :ab3, :eb4,
 trumpet_a_time = [o,     s,   s,  q,    o,     s,   s,  op,      s,   o,   s,    s,     q,  q, q]
 
 trumpet_b_line = [:c5,:c5,:ab4,:g4,:eb4,:d4,:eb4, :f4, :g4,]
-trumpet_b_time = [qp,  st, st, st,  q,   ot, ot,  ot, sb ]
+trumpet_b_time = [qp,  st, st, st,  q,   ot, ot,  ot, mp ]
 
 
 trumpet_c_line = [:g4, :f4,  :eb4, :g4,  :f4,  :d4, :eb4, :c4, :r, :r, :r]
@@ -47,27 +43,18 @@ trumpet_c_time = [q,    q,   o,   o,     o,   o,    o, o, o, o, q]
 
 
 #bass
-bass_a_line= [:c2, :g1, :bb1, :c2, :c2,  :r, :c2,:c2, :bb1, :c2, :ab1, :ab1,  :ab1, :ab1, :ab1]
-bass_a_time = [q,   s,   s,    s,  s,    q,    s,  s,  s,    s,   q,   s,    s,   s,    s ]
+bass_a_line= [:c2, :g1, :bb1, :c2, :c2,     :r,    :c2, :c2, :bb1, :c2,  :ab1,  :ab1, :ab1, :ab1, :ab1,   :r, :ab1]
+bass_a_time = [q,   s,   s,    s,  s,        q,      s,  s,    s,   s,     q,    s,     s,   s,  s,        q,  q ]
 
 
-
+#ok!
 bass_b_line= [:c2, :g1, :bb1, :c2, :c2,  :r, :r, :c2, :g1, :bb1, :c2, :c2,  :r, :r]
 bass_b_time = [q,   s,   s,    s,  s,    q,  q,   q,   s,   s,    s,  s,    q,  q]
 
-bass_c_line = [:ab1,  :ab1, :ab1, :ab1,:ab1, :r,  :ab1,   :c2, :g1, :bb1, :c2,  :r, :c2]
-bass_c_time = [q,      s,   s,     s,   s,    o,   q,     q,   s,   s,    o,   s,    q]
+bass_c_line = [:c2,  :c2, :c2, :c2,  :c2,  :r,  :c2,   :c2,  :g1,  :bb1, :c2, :r,  :c2]
+bass_c_time = [q,      s,   s,   s,   s,    o,   qp,    q,     s,   s,    s,  s,   qp]
 
 
-#drums
-drums_a_line = [:eb4,:d4,:c4,:eb4,:d4,:c4,:r,:g3,:ab3,:eb4,:eb4,:d4,:c4,:eb4,:d4,:c4,:r,:g3,:ab3,:eb4]
-drums_a_time = [m,m,m,m,m,m,m,m,m,m]
-
-drums_b_line = [:eb4,:d4,:c4,:eb4,:d4,:c4,:r,:g3,:ab3,:eb4,:eb4,:d4,:c4,:eb4,:d4,:c4,:r,:g3,:ab3,:eb4]
-drums_b_time = [m,m,m,m,m,m,m,m,m,m]
-
-drums_b_line = [:eb4,:d4,:c4,:eb4,:d4,:c4,:r,:g3,:ab3,:eb4,:eb4,:d4,:c4,:eb4,:d4,:c4,:r,:g3,:ab3,:eb4]
-drums_b_time = [m,m,m,m,m,m,m,m,m,m]
 
 chords_a = ring   (chord :c, :minor7),   (chord :c, :minor7), (chord :c, :minor7),   (chord :c, :minor7),
   (chord :ab, :major7), (chord :ab, :major7), (chord :ab, :major7), (chord :ab, :major7)
@@ -98,9 +85,16 @@ end
 define :trumpet do |notearray,durationarray,shift=0,vol=1|
   in_thread do
     with_fx :reverb do
-      with_fx :lpf, cutoff: 110 do
-        with_synth :dsaw do
-          playarray(notearray, durationarray,0,vol=1,sust=0.3)
+      with_fx :lpf, cutoff: 100 do
+        in_thread do
+          with_synth :dsaw do
+            playarray(notearray, durationarray,0,vol=1,sust=0.3)
+          end
+        end
+        in_thread do
+          with_synth :dpulse do
+            playarray(notearray, durationarray,0,vol=1,sust=0.3)
+          end
         end
       end
     end
@@ -111,11 +105,22 @@ end
 
 define :bass do |notearray,durationarray,shift=0,vol=1|
   in_thread do
-    with_fx :krush, mix: 0.2, amp: 0.5 do
-      with_fx :compressor, pre_amp: 3, threshold: 70  do
-        with_fx :reverb, room: 0.2 do
-          with_synth :dsaw do
-            playarray(notearray, durationarray,0,1.5,0.2)
+    with_fx :band_eq, freq: 50, res: 0.5, db: 3 do
+      with_fx :krush, mix: 0.2, amp: 0.5 do
+        with_fx :compressor, pre_amp: 3, threshold: 70  do
+          in_thread do
+            with_synth :dsaw do
+              with_fx :lpf, cutoff: 80 do
+                playarray(notearray, durationarray,0,1,0.1)
+              end
+            end
+          end
+          in_thread do
+            with_synth :dpulse do
+              with_fx :lpf, cutoff: 80, mix: 1, pre_amp: 1 do
+                playarray(notearray, durationarray, 0, 1, 0.1)
+              end
+            end
           end
         end
       end
@@ -124,23 +129,10 @@ define :bass do |notearray,durationarray,shift=0,vol=1|
 end
 
 
-define :drums do |notearray,durationarray,shift=0,vol=1|
-  1.times do
-    in_thread do
-      with_fx :reverb do
-        with_synth :blade do
-          2.times do
-            playarray(notearray, durationarray,0,1)
-          end
-        end
-      end
-    end
-  end
-end
 
 # STRUTTURA
-
 define :intro do
+  puts "Intro"
   1.times do
     trumpet(trumpet_a_line,trumpet_a_time)
     sleep 4*2
@@ -151,6 +143,7 @@ end
 
 
 define :part_a do
+  puts "Part A"
   2.times do
     #in_thread do
     trumpet(trumpet_a_line,trumpet_a_time)
@@ -158,6 +151,7 @@ define :part_a do
     #in_thread do
     bass(bass_a_line,bass_a_time)
     harmony(chords_a)
+    drums_ab
     sleep 8
   end
   
@@ -170,21 +164,48 @@ end
 
 
 define :part_b do
-  
-  4.times do
+  puts "Part B"
+  2.times do
     trumpet(trumpet_b_line,trumpet_b_time)
     bass(bass_b_line,bass_b_time)
     harmony(chords_b)
+    drums_ab
     sleep 8
   end
 end
 
+
+define :part_ending do
+  puts "Bye bye"
+  # very important construct, it allows to specify a control for the effect!!!
+  with_fx :level do |vol|
+    control vol, amp: 1
+    in_thread do
+      4.times do
+        trumpet(trumpet_b_line,trumpet_b_time)
+        bass(bass_b_line,bass_b_time)
+        harmony(chords_b)
+        drums_ab
+        sleep 3*8
+      end
+    end
+    sleep 8
+    control vol,  amp: 0, amp_slide: 4
+  end
+end
+
+
+
+
+
 define :part_c do
-  4.times do
+  puts "Part C"
+  2.times do
     trumpet(trumpet_c_line,trumpet_c_time)
     bass(bass_c_line,bass_c_time)
     harmony(chords_c)
-    sleep 4*2
+    drums_c
+    sleep 8
   end
 end
 
@@ -192,16 +213,61 @@ end
 define :brake_one do
   4.times do
     bass(bass_b_line,bass_b_time)
+    harmony(chords_b)
+    drums_ab
     sleep 4*2
   end
 end
 
 
 
-live_loop :click do
-  sample :drum_cymbal_pedal
-  sleep 1
+define :solo do
+  8.times do
+    bass(bass_a_line,bass_a_time)
+    harmony(chords_a)
+    drums_ab
+    sleep 4*2
+    puts "round"
+  end
 end
+
+
+
+define :drums_ab do
+  in_thread do
+    16.times do
+      sample :elec_bong, amp: 1.4 if (spread 3, 4).tick
+      sample :perc_snap, amp: 1 if (spread 2, 4).look
+      sample :bd_haus, amp: 1 if (spread 3, 8).look
+      
+      with_fx :compressor, threshold: 130, mix: 1, amp: 1, clamp_time: 0.1, slope_below: 1.1, slope_above: 2 do
+        sample :elec_hi_snare, amp: 1
+      end
+      sleep 0.5
+    end
+  end
+end
+
+define :drums_c do
+  in_thread do
+    16.times do
+      sample :drum_bass_hard , amp: 1.5 if (spread 2, 4).tick
+      sample :ambi_lunar_land, amp: 0.8 if (spread 3, 4).look
+      sample :bd_haus, amp: 2 if (spread 4, 8).look
+      
+      with_fx :compressor, threshold: 130, mix: 1, amp: 1, clamp_time: 0.1, slope_below: 1.1, slope_above: 2 do
+        sample :elec_hi_snare, amp: 0.4
+      end
+      sleep 1
+    end
+  end
+end
+
+
+
+
+
+
 
 
 
@@ -213,7 +279,7 @@ define :playarray do |notearray,durationarray,shift=0,vol=1,sust=0.4|
       sleep durationarray
     else
       with_transpose shift do #allows transposition (may be 0) for the part
-        play notearray, sustain: sust #eamp: vol,sustain: durationarray * 0.99,release: durationarray * 0.1 #play note
+        play notearray, sustain: sust, amp: vol, sustain: durationarray * 0.99,      release: durationarray * 0.1 #play note
         sleep durationarray #gap till next note
       end
     end
@@ -223,38 +289,41 @@ end
 
 
 
-
-
-
 #set_sched_ahead_time! 0.5 #adjust as necessary.
 with_fx :reverb,room: 0.5 do
   
-  with_fx :echo, decay: 2, phase: 0.35, max_phase: 0.55 do
+  with_fx :echo, decay: 2, pre_amp: 0.8, max_phase: 0.4, phase: 0.25, max_phase: 0.55 do
     intro #0:00
   end
   
-  part_b #0:20
+  part_b #0:20 (la seconda volta con due voci)
+  part_b
   
-  part_a  # 0:51
-  part_c # 1:36
+  part_a  # 0:51 (tutte e due le voci, una un ottava piu in basso)
+  part_c # 1:36 (tutte e due le voci, una un ottava piu in basso)
   
   part_a
   part_c
   
   brake_one # 1:52
   
+  
+  
   part_a # 2:07
   part_c #
   
-  part_b # 2 TIMES NOT FOUR! 2:38
+  part_b # 2:38
   
-  breake_two # 2:50   x2 alone bass
-  breake_two       # x8 solo
+  brake_one # 2:50   x2 alone bass
+  solo       # x8 solo
   
-  part_a # 4:18
+  part_a # 4:18  (cambia un pelo il basso)
   part_c # 4:33
-  part_a
-  part_c
-  part_b # 5:19  x4 fading...
+  part_a # 4:49 (cambia il basso) con la terzinatura all'inizio dei primi crochet
+  part_c # 5:04
+  
+  
+  part_ending # 5:19  x4 fading...
   
 end
+
