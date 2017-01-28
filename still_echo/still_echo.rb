@@ -38,8 +38,8 @@ trumpet_b_line = [:c5,:c5,:ab4,:g4,:eb4,:d4,:eb4, :f4, :g4,]
 trumpet_b_time = [qp,  st, st, st,  q,   ot, ot,  ot, mp ]
 
 
-trumpet_c_line = [:g4, :f4,  :eb4, :g4,  :f4,  :d4, :eb4, :c4, :r, :r, :r]
-trumpet_c_time = [q,    q,   o,   o,     o,   o,    o, o, o, o, q]
+trumpet_c_line = [:g4, :f4,    :eb4, :r,  :g4, :r,  :f4, :r,  :d4, :r, :eb4, :c4, :r, :r, :r]
+trumpet_c_time = [q,    q,      s,   s,    s,   s,   s,   s,   s,   s, o, o, o, o, q]
 
 
 #bass
@@ -85,15 +85,21 @@ end
 define :trumpet do |notearray,durationarray,shift=0,vol=1|
   in_thread do
     with_fx :reverb do
-      with_fx :lpf, cutoff: 100 do
-        in_thread do
-          with_synth :dsaw do
-            playarray(notearray, durationarray,0,vol=1,sust=0.3)
-          end
-        end
-        in_thread do
-          with_synth :dpulse do
-            playarray(notearray, durationarray,0,vol=1,sust=0.3)
+      with_fx :flanger, delay: 0.01 do
+        with_fx :distortion, distort: 0.5 do
+          with_fx :lpf, cutoff: 120 do
+            with_fx :gverb, damp: 1 do
+              in_thread do
+                with_synth :dsaw do
+                  playarray(notearray, durationarray,0,vol=1,sust=0.3)
+                end
+              end
+              in_thread do
+                with_synth :dpulse do
+                  playarray(notearray, durationarray,0,vol=1,sust=0.3)
+                end
+              end
+            end
           end
         end
       end
@@ -107,18 +113,20 @@ define :bass do |notearray,durationarray,shift=0,vol=1|
   in_thread do
     with_fx :band_eq, freq: 50, res: 0.5, db: 3 do
       with_fx :krush, mix: 0.2, amp: 0.5 do
-        with_fx :compressor, pre_amp: 3, threshold: 70  do
-          in_thread do
-            with_synth :dsaw do
-              with_fx :lpf, cutoff: 80 do
-                playarray(notearray, durationarray,0,1,0.1)
+        with_fx :compressor, pre_amp: 3, threshold: 80  do
+          with_fx :distortion, distort: 0.8 do
+            in_thread do
+              with_synth :dsaw do
+                with_fx :lpf, cutoff: 80 do
+                  playarray(notearray, durationarray,0,1,0.1)
+                end
               end
             end
-          end
-          in_thread do
-            with_synth :dpulse do
-              with_fx :lpf, cutoff: 80, mix: 1, pre_amp: 1 do
-                playarray(notearray, durationarray, 0, 1, 0.1)
+            in_thread do
+              with_synth :dpulse do
+                with_fx :lpf, cutoff: 80, mix: 1, pre_amp: 1 do
+                  playarray(notearray, durationarray, 0, 1, 0.1)
+                end
               end
             end
           end
@@ -292,7 +300,7 @@ end
 #set_sched_ahead_time! 0.5 #adjust as necessary.
 with_fx :reverb,room: 0.5 do
   
-  with_fx :echo, decay: 2, pre_amp: 0.8, max_phase: 0.4, phase: 0.25, max_phase: 0.55 do
+  with_fx :echo, decay: 3, pre_amp: 0.8, max_phase: 0.4, phase: 0.25, max_phase: 0.55 do
     intro #0:00
   end
   
