@@ -91,12 +91,12 @@ define :trumpet do |notearray,durationarray,shift=0,vol=1|
             with_fx :gverb, damp: 1 do
               in_thread do
                 with_synth :dsaw do
-                  playarray(notearray, durationarray,0,vol=1,sust=0.3)
+                  playarray(notearray, durationarray,0,vol=0.8,sust=0.3)
                 end
               end
               in_thread do
                 with_synth :dpulse do
-                  playarray(notearray, durationarray,0,vol=1,sust=0.3)
+                  playarray(notearray, durationarray,0,vol=0.8,sust=0.3)
                 end
               end
             end
@@ -118,14 +118,14 @@ define :bass do |notearray,durationarray,shift=0,vol=1|
             in_thread do
               with_synth :dsaw do
                 with_fx :lpf, cutoff: 80 do
-                  playarray(notearray, durationarray,0,1,0.1)
+                  playarray(notearray, durationarray,0,0.9,0.1)
                 end
               end
             end
             in_thread do
               with_synth :dpulse do
                 with_fx :lpf, cutoff: 80, mix: 1, pre_amp: 1 do
-                  playarray(notearray, durationarray, 0, 1, 0.1)
+                  playarray(notearray, durationarray, 0, 0.9, 0.1)
                 end
               end
             end
@@ -242,18 +242,19 @@ end
 
 
 define :drums_ab do
+  
   in_thread do
     16.times do
-      sample :elec_bong, amp: 1.4 if (spread 3, 4).tick
-      sample :perc_snap, amp: 1 if (spread 2, 4).look
-      sample :bd_haus, amp: 1 if (spread 3, 8).look
-      
-      with_fx :compressor, threshold: 130, mix: 1, amp: 1, clamp_time: 0.1, slope_below: 1.1, slope_above: 2 do
-        sample :elec_hi_snare, amp: 1
-      end
+      sample my_sample, "hit_5", amp: 1, hpf: 85, if (spread, 10, 18)
       sleep 0.5
     end
   end
+  in_thread do
+    16.times do
+      sample :drum_heavy_kick, amp: 1 if (spread 2, 16).tick
+    end
+  end
+  
 end
 
 define :drums_c do
@@ -270,12 +271,6 @@ define :drums_c do
     end
   end
 end
-
-
-
-
-
-
 
 
 
@@ -314,8 +309,6 @@ with_fx :reverb,room: 0.5 do
   part_c
   
   brake_one # 1:52
-  
-  
   
   part_a # 2:07
   part_c #
