@@ -1,5 +1,7 @@
 use_bpm 64
 
+my_sample = "/Users/scinawa/Desktop/Samples/"
+solenoid = "/Users/scinawa/Desktop/Samples/solenoid"
 
 st = sedicesimo_terzina = 0.1666
 s = sedicesimo = 0.25
@@ -244,8 +246,32 @@ end
 define :drums_ab do
   
   in_thread do
+    tick
+    tick
     16.times do
-      sample my_sample, "hit_5", amp: 1, hpf: 85, if (spread, 10, 18)
+      sample solenoid, "hit_5", amp: 1.8, hpf: 100 if (spread, 18, 18).look
+      sample my_sample, "Korg-M3R-Side-Stick", amp: 4 if (spread, 3, 16).look
+      tick
+      sleep 0.5
+    end
+  end
+  in_thread do
+    16.times do
+      sample :drum_heavy_kick, amp: 1 if (spread 2, 16).tick
+      sleep 0.5
+    end
+  end
+  
+end
+
+
+define :drums_c do
+  
+  in_thread do
+    16.times do
+      sample solenoid, "hit_5", amp: 1, hpf: 85 if (spread, 10, 18).look
+      sample
+      tick
       sleep 0.5
     end
   end
@@ -257,26 +283,12 @@ define :drums_ab do
   
 end
 
-define :drums_c do
-  in_thread do
-    16.times do
-      sample :drum_bass_hard , amp: 1.5 if (spread 2, 4).tick
-      sample :ambi_lunar_land, amp: 0.8 if (spread 3, 4).look
-      sample :bd_haus, amp: 2 if (spread 4, 8).look
-      
-      with_fx :compressor, threshold: 130, mix: 1, amp: 1, clamp_time: 0.1, slope_below: 1.1, slope_above: 2 do
-        sample :elec_hi_snare, amp: 0.4
-      end
-      sleep 1
-    end
-  end
-end
-
 
 
 #procedure to play an array of notes and associated array of durations
 #shift allows for transposing, vol for volume and voice for synth used
 define :playarray do |notearray,durationarray,shift=0,vol=1,sust=0.4|
+  # Thanks to Robin Newman: @rbnpi (Github..)
   notearray.zip(durationarray).each do |notearray,durationarray| #traverse both arrays together
     if notearray == :r #if rest just wait duration
       sleep durationarray
@@ -295,9 +307,9 @@ end
 #set_sched_ahead_time! 0.5 #adjust as necessary.
 with_fx :reverb,room: 0.5 do
   
-  with_fx :echo, decay: 3, pre_amp: 0.8, max_phase: 0.4, phase: 0.25, max_phase: 0.55 do
-    intro #0:00
-  end
+  #with_fx :echo, decay: 3, pre_amp: 0.8, max_phase: 0.4, phase: 0.25, max_phase: 0.55 do
+  #  intro #0:00
+  #end
   
   part_b #0:20 (la seconda volta con due voci)
   part_b
