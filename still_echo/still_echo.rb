@@ -146,7 +146,7 @@ define :drums_ac do
     tick
     tick
     16.times do
-      sample solenoid, "hit_5", amp: 0.85, hpf: 100 if (spread, 18, 18).tick
+      sample my_sample, "Closed-Hi-Hat-2", amp: 0.85, hpf: 100 if (spread, 18, 18).tick
       with_fx :reverb, amp: 1, room: 1 do
         sample my_sample, "Korg-M3R-Side-Stick", amp: 2 if (spread, 4, 16).look
       end
@@ -173,7 +173,7 @@ define :drums_b do
     tick
     16.times do
       with_fx :compressor do
-        sample solenoid, "hit_5", amp: 0.85, hpf: 100 if (spread, 18, 18).tick
+        sample my_sample, "Closed-Hi-Hat-2", amp: 0.85, hpf: 100 if (spread, 18, 18).tick
       end
       with_fx :reverb, amp: 1, room: 1 do
         sample my_sample, "Korg-M3R-Side-Stick", amp: 2 if (spread, 5, 16).look
@@ -252,7 +252,7 @@ end
 
 define :solo do
   puts "Start solo!"
-  counter=0
+  counter=8
   8.times do
     bass(bass_a_line,bass_a_time)
     harmony(chords_a)
