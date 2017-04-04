@@ -1,3 +1,9 @@
+# Uochi Toki
+# Le armi, aka Il pezzo Jam
+#
+#
+# Scinawa
+
 use_bpm 75
 
 s = sedicesimo = 0.25
@@ -44,33 +50,34 @@ live_loop :cmaj7 do
   
   sus = rrand(0.1, 0.4)
   puts "Sus:", sus
-  
-  with_fx :bitcrusher do |c_sample|
-    control c_sample, cutoff: rrand(80,129), sample_rate: rrand(1000, 10000)
-    with_fx :wobble, cutoff_max: rrand(90,129), probability: rrand(0,1), phase: rrand(0,1)  do
-      with_fx :reverb, room: 0.9, damp: 0.9 do #reverb is better inside whobble and bitcrusher! why?
-        notes = [:c3, :c2, :r, :b1, :b1, :b1, :r, :c2, :r]
-        temps = [ s,   s,   s,   s,  s,   s,  s,   s,  q]
-        
-        in_thread do
-          with_synth :dsaw do
-            c_dsaw = play_pattern_timed notes, temps, sustain: sus, release: 0.15, pan: 0.2
+  with_fx :distortion, distort: 0.60 do
+    with_fx :bitcrusher do |c_sample|
+      control c_sample, cutoff: rrand(80,129), sample_rate: rrand(1000, 10000)
+      with_fx :wobble, cutoff_max: rrand(90,129), probability: rrand(0,1), phase: rrand(0,1), mix: 0.5 do
+        with_fx :reverb, room: 0.9, damp: 0.9 do #reverb is better inside whobble and bitcrusher! why?
+          notes = [:c3, :c2, :r, :b1, :b1, :b1, :r, :c2, :r]
+          temps = [ s,   s,   s,   s,  s,   s,  s,   s,  q]
+          
+          in_thread do
+            with_synth :dsaw do
+              c_dsaw = play_pattern_timed notes, temps, sustain: sus, release: 0.15, pan: 0.2
+            end
           end
-        end
-        in_thread do
-        end
-        
-        in_thread do
-          with_synth :fm do
-            c_fm = play_pattern_timed notes, temps, sustain: sus, release: 0.15, pan: -0.2, amp: 0.1
+          in_thread do
           end
-        end
-        in_thread do
-          with_synth :sine do
-            c_sine = play_pattern_timed notes, temps, sustain: sus, release: 0.15, pan: -0.2
+          
+          in_thread do
+            with_synth :fm do
+              c_fm = play_pattern_timed notes, temps, sustain: sus, release: 0.15, pan: -0.2, amp: 0.1
+            end
           end
+          in_thread do
+            with_synth :sine do
+              c_sine = play_pattern_timed notes, temps, sustain: sus, release: 0.15, pan: -0.2
+            end
+          end
+          sleep 4
         end
-        sleep 4
       end
     end
   end
