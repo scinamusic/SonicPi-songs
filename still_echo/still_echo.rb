@@ -1,3 +1,8 @@
+# Still Echo
+# Mute beat
+
+# By Scinawa
+
 use_bpm 64
 
 my_sample = "/Users/scinawa/Desktop/Samples/"
@@ -120,7 +125,8 @@ define :bass do |notearray,durationarray,shift=0,vol=1|
         with_fx :compressor, pre_amp: 1, threshold: 80  do
           with_fx :distortion, distort: 0.8 do
             in_thread do
-              with_synth :dsaw do
+              with_synth :d
+              saw do
                 with_fx :lpf, cutoff: 80 do
                   playarray(notearray, durationarray,0,0.9,0.1)
                 end
@@ -266,19 +272,22 @@ end
 define :part_ending do
   puts "Bye bye"
   # very important construct, it allows to specify a control for the effect!!!
-  with_fx :level do |vol|
-    control vol, amp: 1
-    in_thread do
-      4.times do
-        trumpet(trumpet_b_line,trumpet_b_time)
-        bass(bass_b_line,bass_b_time)
-        harmony(chords_b)
-        drums_b
-        sleep 3*8
+  with_fx :echo, mix: 0 do |echoc|
+    with_fx :level do |vol|
+      control vol, amp: 1
+      in_thread do
+        4.times do
+          trumpet(trumpet_b_line,trumpet_b_time)
+          bass(bass_b_line,bass_b_time)
+          harmony(chords_b)
+          drums_b
+          sleep 8
+        end
       end
+      sleep 24
+      control echoc, mix: 1, mix_slide: 3, decay: 2, phase: 0.5
+      control vol,  amp: 0, amp_slide: 5
     end
-    sleep 8
-    control vol,  amp: 0, amp_slide: 4
   end
 end
 
@@ -305,7 +314,7 @@ end
 
 
 #set_sched_ahead_time! 0.5 #adjust as necessary.
-with_fx :reverb,room: 0.5 do
+with_fx :reverb,room: 0.8 do
   
   with_fx :echo, decay: 3, pre_amp: 0.8, max_phase: 0.4, phase: 0.25, max_phase: 0.55 do
     intro #0:00
